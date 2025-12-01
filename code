@@ -1,0 +1,283 @@
+using System;
+using System.Collections;
+
+public class Student{
+
+    //Creating list to store the IDs of students and for searching.
+    public static List<String> IDList = new List<String>(); 
+
+    //Creating list to store the grades of students.
+    private List<int> Grades = new List<int>(); 
+
+    //Attributes field
+    private String ID;  
+    private String Name;
+
+    //Constructer for Student class.
+    public Student(string ID, string Name)
+    {
+        this.ID = ID;
+        this.Name = Name;
+    }
+
+    //Method to add the grade.
+    public void addGrade(int Grade) {
+        Grades.Add(Grade);                         
+    }
+    //Method to calculate the average.
+    public Double calculateAvg() {
+        Double sumGrades = 0; //Set sumGrades to zero
+        for (int i = 0;i<Grades.Count;i++) { //For loop to iterate over the grades
+            sumGrades += Grades[i]; // add indexed grade to the sumGrades 
+        }
+        Double Avg = sumGrades / Grades.Count; // Calculate average
+        return Avg;
+    }
+
+    //Getter method for Grades list.
+    public List<int> getGrades() {
+        return Grades;
+    }
+
+    //Getter method for the Name.
+    public String getName()
+    {
+        return Name;
+    }
+
+    //Getter method for the ID.
+    public String getID()
+    {
+        return ID;
+    }
+
+} //End class Student
+
+public class StudentGradesManagementSystem 
+{
+    public static void Main(String[] args) 
+    {
+
+        //Creating list of students objects
+        List<Student> StudentObjects = new List<Student>();  
+
+        //Creating the interface for the user.
+        Console.WriteLine("Welcome to the Student Grade Management System!"); //Print statement
+        int choice;
+        while (true) //While loop
+        {
+            //Creating the main menu    
+            Console.Write("Please select an option: \n" +
+                "1. Add a student\n" +
+                "2. Add a grade \n" +
+                "3. Calculate average \n" +
+                "4. List students \n" +
+                "5. Search for a student \n" +
+                "6. Delete a student \n" +
+                "7. Exit\n\n" +
+                "Enter your choice: ");
+
+            //Exeption handling if the user enters non-integer input 
+            try  
+            {
+                choice = Convert.ToInt32(Console.ReadLine()); //take input from the user to check 
+            }
+            catch (FormatException) //Catch the exeption
+            {
+                Console.WriteLine("Only numeric Characters are allowed"); //Print statement
+                continue; //Back to the main menu
+            }    
+            
+            //Switch statement 
+            switch (choice)
+            {
+                case 1:
+                {
+                    AddStudent(); //Calling AddStudent() method.
+                    break;
+                
+                }
+                case 2:
+                {
+                    AddGrade(); //Calling AddGrade() method.
+                    break;
+                }
+                case 3:
+                {
+                    CalcAvg(); //Calling CalcAvg() method.
+                    break;
+                }
+                case 4:
+                {
+                    ListStudent(); //Calling ListStudent() method.
+                    break;
+                }
+                case 5:
+                {
+                    SearchStudent(); //Calling SearchStudent method.
+                    break;
+                }
+                case 6:
+                {
+                    DeleteStudent(); //Calling DeleteStudent() method.
+                    break; 
+                }
+                case 7:
+                {
+                    Console.WriteLine("Thank you for using the Student Grade Management System. Goodbye!");
+                    System.Environment.Exit(0); //Terminate the program
+                    break;
+                }
+                default: //if input not between 1-7 default will run
+                {
+                    //If user enters numbers out of the range 1-7
+                    Console.WriteLine("error: invalid input");
+                    break;
+                }
+            }
+            Console.WriteLine(); //Line
+        }
+
+        //Method for adding students
+        void AddStudent()
+        {
+            Console.Write("Enter student ID: "); //Print statement
+            String ID = Console.ReadLine(); //Take input from user
+            if (Student.IDList.Contains(ID)) //Checking if ID list contains the input 
+            {
+                Console.WriteLine("Student ID already exists"); //Print statement
+                return;
+            }
+            //Exception handling:
+            //Only numbers are allowed in the ID input otherwise the message error will be printed.
+            try  
+            {
+                Convert.ToInt32(ID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Only numeric Characters are allowed");
+                return;
+            }
+            ID = ID.TrimStart(); //Removes all the leading white-space characters from the current string.
+
+            Student.IDList.Add(ID); //adding the id to the id list
+            Console.Write("Enter student name: ");  //Print statement
+            string name = Console.ReadLine(); //Take input from user
+            StudentObjects.Add(new Student(ID, name)); //adding and creating new object 
+            Console.WriteLine("Student added successfully."); //Print statement
+        }
+
+        //Method for adding grades to the specific student.
+        void AddGrade()
+        {
+            Console.Write("Enter the student ID: "); //Print statement
+            String ID = Console.ReadLine(); //Take input from user
+            Console.WriteLine(); //Line
+
+            if (!Student.IDList.Contains(ID)) //If the entered ID not in the list print the error message.
+            {
+                Console.WriteLine("Student ID does not exist"); //Print statement
+                return;
+            }
+            int idx = Student.IDList.IndexOf(ID); //Storing the index number of the entered id in a variable.
+            Student obj = StudentObjects[idx]; // Set the specefic student to object
+            Console.Write("Enter the grade: "); //Print statement
+            int grade = Convert.ToInt32(Console.ReadLine()); //Take input from user
+            obj.addGrade(grade); // Add the grade to the specifc student
+            Console.WriteLine("Grade added successfully.");  //Print statement         
+        }
+        
+        //Method for claculating the average.
+        void CalcAvg()
+        {
+            Console.Write("Enter the student ID: "); //Print statement
+            String ID = Console.ReadLine(); //Take input from user
+            if (!Student.IDList.Contains(ID)) //If the entered ID not in the list print the error message.
+            {
+                Console.WriteLine("Student ID does not exist"); //Print statement
+                return;
+            }
+            int idx = Student.IDList.IndexOf(ID); //Storing the index number of the entered id in a variable.
+            Student obj = StudentObjects[idx]; // Set the specefic student to object
+            List<int> Grades = obj.getGrades(); //Temporary list for grades
+            
+            for (int i = 0; i < Grades.Count; i++) //for loop for printing the specific student grades.
+            {
+                Console.WriteLine("- Grade: "+ Grades[i]); // Print statement to print the grades
+            }
+            //Print the average.
+            Console.WriteLine("\nAverage grade for student with ID "+ ID+ " is "+ obj.calculateAvg()); //Print statement
+        }
+
+        //Method for listing all students.
+        void ListStudent()
+        {
+            if (Student.IDList.Count == 0) //If the list has no students print the error message.
+            {
+                Console.WriteLine("There are no students."); //Print statement
+                return;
+            }
+            Console.WriteLine("List of students: "); //Print statement
+
+            for (int i = 0; i < Student.IDList.Count; i++) //for loop for listing the students.
+            {
+                string Name = StudentObjects[i].getName(); //Set Name to the indexed Object from StudentObjects list
+                string ID = StudentObjects[i].getID(); //Set ID to the indexed Object from StudentObjects list
+                Console.WriteLine("ID: " + ID + " , Name: " + Name); //Print the Name and ID
+            }
+
+        }
+
+
+        //Method for searching for a student.
+        void SearchStudent()
+        {
+            Console.Write("Enter the student name or ID to search: "); //Print statement
+            string Search = Console.ReadLine(); //Take input from user
+            List<int> idx = new List<int>(); //Creating temporary list for searching 
+            Search.ToLower(); //Convert the entered name(if it was name) to a lowercase.
+            for (int i = 0; i < StudentObjects.Count; i++) //For loop to iterate over the StudentObjects list for searching 
+            {
+                if ((Student.IDList[i].Equals(Search))) //We used Equals here because the ID must be unique.
+                {
+                    idx.Add(i); //Add the id to the temporary list
+                    break; // We used break here because we need only one unique id
+                }
+                if (StudentObjects[i].getName().ToLower().Contains(Search)) //But here we might have same names so we used Contains.
+                {
+                    idx.Add(i); //Add the name to the temporary list
+                }
+                
+            }
+            if (idx.Count == 0) //if the idx list has no elements(no students) print the error message
+            {
+                Console.WriteLine("No Results were Found"); //Print statement
+                return;
+            }
+            Console.WriteLine("Search Results: "); //Print statement
+            for (int j = 0; j < idx.Count; j++) // For loop for printing the result
+            {
+                Console.WriteLine("ID: " + StudentObjects[idx[j]].getID() + " Name: " + StudentObjects[idx[j]].getName()); //Print statement
+            }
+        }
+
+        //Method for deleting a specific student.
+        void DeleteStudent()
+        {
+            Console.Write("enter the student ID to delete: "); //Print statement
+            String ID = Console.ReadLine(); //Take input from the user
+
+            if (!Student.IDList.Contains(ID)) //Checking if the entered input not in the list
+            {
+                Console.WriteLine("Student ID does not exist"); //Take input from the user
+                return;
+            }
+            int idx = Student.IDList.IndexOf(ID); //Store the entered id index to idx
+            StudentObjects.RemoveAt(idx); //Removing the entered input(Object) from the system
+            Student.IDList.RemoveAt(idx); ////Removing the entered input(ID) from the system
+            Console.WriteLine("Student with ID " + ID + " deleted successfully!"); //Print statement
+        }
+
+    }
+} //End class StudentGradesManagementSystem
